@@ -1,0 +1,141 @@
+---
+title: "HW2"
+author: "Joyce, Yameili, Tamires"
+date: "9/20/2020"
+output: html_document
+---
+```
+
+## Possible Protocol 1 **(PP1)**: roll once; if get 6 then conclude the dice is not fair; if roll any other number then conclude it is fair. Analyze PP1: if the dice were fair, what is the probability it would be judged to be unfair? Oppositely, if the dice were unfair, what is the probability that it would be judged to be fair?
+  Null Hypothesis: game is fair.
+  the roll generate 6: game fail.
+  the roll generate 1-5: success.
+  roll only one time:
+  p(fail)=1/6
+  p(success)=5/6
+  
+  
+
+## **PP2**: roll the dice 30 times. Group can specify a decision rule to judge that dice is fair or unfair. Consider the stats question: if fair dice are rolled 30 times, what is likely number of 6 resulting? How unusual is it, to get 1 more or less than that? How unusual is it, to get 2 more or less? 3? At least one member of the group should be able to do this with theory; at least one member of the group should be able to write a little program in R to simulate this. Analyze PP2 including the question: if the dice were fair, what is the chance it could be judged as unfair?
+  
+  if the dice roll is fair, it is binomial(N,1/k)=(30,1/6); 
+  X:the times six appear
+  E(X)=5
+  The mean=𝜇=𝑁𝑝=30*1/6=5
+  standard deviation 𝜎=[𝑁𝑝(1−𝑝)]^(1/2)=(30*1/6*5/6)^(1/2)=2.04
+  
+1) the probability of getting 6 five time
+```
+```{r}
+x<-pbinom(5,30,1/6)
+print(x)
+```
+
+2)the un-usualness of getting 1, 2,3 less than expected value
+
+```{r}
+x<-pbinom(4,30,1/6)
+print(x)
+```
+
+```{r}
+x<-pbinom(3,30,1/6)
+print(x)
+```
+```{r}
+x<-pbinom(2,30,1/6)
+print(x)
+```
+##the probability of getting less and less sixs become smaller, vice vesa. 
+
+
+
+  ## Using Chi-Squared test to analyze the fairness of the die: 
+  -- 5% error is allowed. 
+  Null Hypothesis: the die is fair.
+```
+```
+```{r}
+rolls <- sample(1:6,30, replace = T)
+table(rolls)
+chisq.test(table(rolls), p = rep(1/6, 6))
+```
+
+```
+```
+The expected value is: 5 times
+The critical value is 11.070
+x-square= 5.6<11.070
+We assume the null hypothesis is true; however, given that the sample is small, the conclusion is not strong.
+```
+```
+
+
+##**PP3**: roll 100 times and specify decision rules. Some cases are easy: if every roll comes to 6 then might quickly conclude. But what about the edge cases? Is it fair to say that every conclusion has some level of confidence attached? Where do you set boundaries for decisions? Analyze PP3.
+
+## Now roll it for 100 times
+```{r}
+rolls <- sample(1:6, 100, replace = T)
+table(rolls)
+chisq.test(table(rolls), p = rep(1/6, 6))
+
+```
+
+By comparing X-square=3.92 with 11.070, we estimate that the die probably has no bias. The frequency of 6 occur with equal frequency.
+```
+```
+## 1000 times
+```{r}
+rolls <- sample(1:6, 1000, replace = T)
+table(rolls)
+
+```
+
+##**EP1**
+SAMPLE SIZE: 30/100/1000 
+Null hypothesis: the die is fair.
+significance level: 0.05
+Design:except for only focusing on the probability of getting a 6, we also look into the frequency of other numbers. 
+
+
+
+```{r}
+sz_1<-function(){
+  sample(6,size=1,replace=T)
+}
+sz_1()
+a<-replicate(30,sz_1())
+library(ggplot2)
+qplot(a,binwith=1)
+
+```
+
+we threw one die repeately and observe how the outcomes distribute.Here we plot the numbers of each outcome in Y-axis(as measurement of frequency), the number of the outcomes (1-6)in X-axis.
+
+when we threw it 30 times, the distribution of each number is imbalanced. 2 has the highest frequency while 5 has the lowest. From the chart, we observed the frequency of each side is biased. 
+
+
+```
+## Now increase the size to 100 times 
+```{r}
+sz_1()
+a<-replicate(100,sz_1())
+library(ggplot2)
+qplot(a,binwith=1)
+```
+
+```{r}
+
+```
+
+## What about 1000 times
+```{r}
+sz_1()
+a<-replicate(1000,sz_1())
+library(ggplot2)
+qplot(a,binwith=1)
+```
+ 
+### With the population becomes larger, the distribution between each side become equally smooth bit by bit. 
+
+##EP2##
